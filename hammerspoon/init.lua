@@ -17,6 +17,15 @@ reopenWindowless.start()
 -- Ctrl+Alt+Cmd+W : activer / désactiver à la volée.
 hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "W", reopenWindowless.toggle)
 
+-- Clic sur l'icône Dock de l'app active : la masquer (ou réduire ses fenêtres).
+dockToggle = require("dock_toggle")
+-- dockToggle.config.action = "minimize"    -- réduire au lieu de masquer
+-- dockToggle.config.logLevel = "debug"
+dockToggle.start()
+
+-- Ctrl+Alt+Cmd+D : activer / désactiver à la volée.
+hs.hotkey.bind({ "ctrl", "alt", "cmd" }, "D", dockToggle.toggle)
+
 -- Recharger automatiquement la config quand un fichier .lua change.
 configWatcher = hs.pathwatcher.new(hs.configdir, function(files)
   for _, file in ipairs(files) do
