@@ -117,11 +117,18 @@ local function onAppEvent(name, event, app)
     return
   end
   if M.config.trigger == "cmdtab" then
-    if now() - state.lastCmdTab > M.config.cmdTabWindow then
+    -- Deux cas : Cmd vient d'être relâché après un Cmd+Tab (sélection au
+    -- clavier), ou le sélecteur est encore ouvert, Cmd tenu (clic sur une icône).
+    local switcherOpen = state.tabWithCmd
+    local justReleased = now() - state.lastCmdTab <= M.config.cmdTabWindow
+    if not (switcherOpen or justReleased) then
       log.d("pas un Cmd+Tab, ignoré : " .. (name or bundleID))
       return
     end
-    state.lastCmdTab = 0 -- un Cmd+Tab ne déclenche qu'une seule vérification
+    -- Un Cmd+Tab ne déclenche qu'une seule vérification : on efface les deux
+    -- marqueurs pour que le relâchement de Cmd qui suit un clic ne compte pas.
+    state.lastCmdTab = 0
+    state.tabWithCmd = false
   end
   if state.pending[bundleID] then
     state.pending[bundleID]:stop()
